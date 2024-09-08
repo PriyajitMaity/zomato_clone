@@ -3,6 +3,13 @@
 
 ## Demo
 - [visit zomato](https://priyojeet-zomato-clone.vercel.app/)
+  
+
+## Features
+Order food online from restaurants.
+User can able to filter restaurants list.
+User can see restaurant and add items in cart but for order login required.
+Totally responsive site.
 
 ## Tech Stack
 - HTML
