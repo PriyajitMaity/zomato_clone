@@ -17,10 +17,10 @@
 - 
 
 ### Screenshots
-![Screenshot (10)](https://github.com/PriyajitMaity/projects/assets/134254753/ce2272a7-3d2d-4382-a241-6dacde0c2618)
-![Screenshot (11)](https://github.com/PriyajitMaity/projects/assets/134254753/41492406-a0d7-4a23-872d-354cb07c5a5a)
-![Screenshot (12)](https://github.com/PriyajitMaity/projects/assets/134254753/c52cfcb0-b26c-41df-bc07-eaf4f51acb36)
-![Screenshot (13)](https://github.com/PriyajitMaity/projects/assets/134254753/55e5c358-d988-44b8-83d0-3097fa15dde6)
-![Screenshot (14)](https://github.com/PriyajitMaity/projects/assets/134254753/213b9f88-e827-425b-8b9a-ceaa131bc651)
+![Screenshot (41)](https://github.com/user-attachments/assets/1aec0ab8-be75-4db7-a4c0-cea96cb0f60d)
+![Screenshot (42)](https://github.com/user-attachments/assets/9629e708-b98f-497b-8b58-e6d7cd2c8027)
+![Screenshot (43)](https://github.com/user-attachments/assets/4a2241d4-0f6b-4901-85a7-87096f78f941)
+![Screenshot (44)](https://github.com/user-attachments/assets/f72bc25d-8df5-4ed5-b83f-6812ec50a909)
+
 
 
