@@ -14,7 +14,7 @@
 - react-carousel
 - sass
 - react-hook-form
-- 
+
 
 ### Screenshots
 ![Screenshot (41)](https://github.com/user-attachments/assets/1aec0ab8-be75-4db7-a4c0-cea96cb0f60d)
