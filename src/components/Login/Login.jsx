@@ -35,7 +35,8 @@ const Login = ({ setLogIn }) => {
   };
 
   const inputBlurHandler = (e) => {
-    
+    // Implement your email and password validation logic here
+    // Update errorState based on validation results
     const key = e.target.id;
     setFocusState({ ...focusState, [key]: false });
 
