@@ -1,13 +1,12 @@
 import { useForm } from "react-hook-form";
 import { useState, useRef } from "react";
-import { HiOutlineX} from "react-icons/hi";
+import { HiOutlineX } from "react-icons/hi";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import './Login.scss';
+import "./Login.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../Redux/loginUserSlice";
 
-
-const Login= ({ setLogIn }) => {
+const Login = ({ setLogIn }) => {
   const {
     register,
     handleSubmit,
@@ -22,31 +21,31 @@ const Login= ({ setLogIn }) => {
   const [disableLogin, setDisableLogin] = useState(false);
   const [unknownError, setUnknownError] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
-  const [removeScale, setRemoveScale] =useState(false);
-  
+  const [removeScale, setRemoveScale] = useState(false);
+
   const [focusState, setFocusState] = useState({ email: false, password: false });
 
   const emailRef = useRef(null);
-  const dispatch =useDispatch();
-  const loginUser =useSelector(state =>state.login_user.user);
+  const dispatch = useDispatch();
+  const loginUser = useSelector((state) => state.login_user.user);
 
   const inputFocusHandler = (e) => {
     setErrorState({ ...errorState, [e.target.id]: false });
-    setFocusState({...focusState, [e.target.id]: true})
+    setFocusState({ ...focusState, [e.target.id]: true });
   };
 
   const inputBlurHandler = (e) => {
     // Implement your email and password validation logic here
     // Update errorState based on validation results
-    const key =e.target.id;
-    setFocusState({...focusState, [key]: false});
+    const key = e.target.id;
+    setFocusState({ ...focusState, [key]: false });
 
-    if(key==='email' && !checkEmail(valueState.email)){
-        errorState.email =true;
-    }else if(key ==='password' && valueState.password){
-        valueState.password =true;
+    if (key === "email" && !checkEmail(valueState.email)) {
+      errorState.email = true;
+    } else if (key === "password" && valueState.password) {
+      valueState.password = true;
     }
-    setErrorState({...errorState});
+    setErrorState({ ...errorState });
   };
 
   const inputChangeHandler = (e) => {
@@ -58,8 +57,8 @@ const Login= ({ setLogIn }) => {
     try {
       // Implement your login logic using data.email and data.password
       // Replace with your actual login API call or logic
-        dispatch(login(data.user));
-        console.log(data.user)
+      dispatch(login(data.user));
+      console.log(data.user);
       // Assuming successful login:
       setLoginSuccess(true);
       setLogIn(data.email); // Assuming loginUser is a state variable to store user details
@@ -118,7 +117,6 @@ const Login= ({ setLogIn }) => {
                     onChange={inputChangeHandler}
                     autoComplete="off"
                     ref={emailRef}
-                    
                   />
                   <label
                     htmlFor="email"
@@ -194,37 +192,46 @@ const Login= ({ setLogIn }) => {
           ) : (
             // Login success section
             <>
-                            <section className='success-message'>
-                                <div className='check'>
-                                    <HiCheck />
-                                    <div className='moving-element'></div>
-                                </div>
-                                <h2 className='heading'>Success!</h2>
-                                <p className='text'>Welcome! {loginUser?.name}. You are successfully logged in!</p>
-                                <div className='buttons'>
-                                    <button className='ok' onClick={() => {
-                                        setLogIn(false);
-                                        navigate('/kolkata');
-                                    }}>See Restaurant Near You</button>
-                                </div>
-                            </section>
-                        </>
-
-            
+              <section className="success-message">
+                <div className="check">
+                  <HiCheck />
+                  <div className="moving-element"></div>
+                </div>
+                <h2 className="heading">Success!</h2>
+                <p className="text">Welcome! {loginUser?.name}. You are successfully logged in!</p>
+                <div className="buttons">
+                  <button
+                    className="ok"
+                    onClick={() => {
+                      setLogIn(false);
+                      navigate("/kolkata");
+                    }}
+                  >
+                    See Restaurant Near You
+                  </button>
+                </div>
+              </section>
+            </>
           )}
         </form>
       ) : (
         // Unknown error section
-        <div className='log-in-failed' onClick={(e) => e.stopPropagation()}>
-        <section className='top-section'>
-            <h2 className='heading'>Login Failed</h2>
-            <span className='cross-btn' onClick={() => setLogIn(false)}><HiOutlineX /></span>
-        </section>
+        <div className="log-in-failed" onClick={(e) => e.stopPropagation()}>
+          <section className="top-section">
+            <h2 className="heading">Login Failed</h2>
+            <span className="cross-btn" onClick={() => setLogIn(false)}>
+              <HiOutlineX />
+            </span>
+          </section>
 
-        <p className='message'>Something went wrong, please check your network and try again</p>
-        <button className='try-again' onClick={() => setUnknownError(false)}>Try again</button>
-        <button className='skip' onClick={() => setLogIn(false)}>Skip for now</button>
-    </div>
+          <p className="message">Something went wrong, please check your network and try again</p>
+          <button className="try-again" onClick={() => setUnknownError(false)}>
+            Try again
+          </button>
+          <button className="skip" onClick={() => setLogIn(false)}>
+            Skip for now
+          </button>
+        </div>
       )}
     </div>
   );
