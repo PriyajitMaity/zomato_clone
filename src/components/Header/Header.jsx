@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Header.css";
 import zomato from "../../utils/images/zomato.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HiOutlineMenu, HiLocationMarker, HiShoppingCart } from "react-icons/hi";
 import { HiXMark } from "react-icons/hi2";
 import { AiFillCaretDown } from "react-icons/ai";
@@ -14,6 +14,8 @@ import { restaurants } from '../../utils/restaurants/restaurants'
 import GenerateSearchBarItem from "../GenerateSearchBarItem/GenerateSearchBarItem";
 import Login from "../Login/Login";
 import Signup from "../Signup/Signup";
+import { logout } from "../Redux/loginUserSlice";
+import { clearCart } from "../Redux/cartItemSlice";
 
 const Header = () => {
   const [displayBar, setDisplayBar] = useState(false);
@@ -21,6 +23,7 @@ const Header = () => {
   const [searchBarItems, setSearchBarItems] =useState([]);
   const [logIn, setLogIn] =useState(false);
   const [signUp, setSignUp] =useState(false);
+  const [displayLogOut, setDisplayLogout] =useState(false);
 
   const cartItems = useSelector(state => state.cart_items.items);
   const loginUser = useSelector(state =>state.login_user.user);
@@ -48,6 +51,15 @@ const Header = () => {
       setSearchBarItems(matchRestaurants.slice(0, 10));
     }
   };
+
+  const userHandler =() =>{
+    setDisplayLogout(!displayLogOut);
+  }
+
+  const logoutHandler =() =>{
+    dispatch(logout());
+    dispatch(clearCart())
+  }
 
   return (
     <header className="header-container">
@@ -115,11 +127,11 @@ const Header = () => {
                 <span className="link" onClick={() =>setSignUp(true)}>Sign Up</span>
               </>
           ):(
-           <span className="link login-user">
+           <span className="link login-user" onClick={userHandler}>
              <FaUserAlt />
-             <span className="name"></span>
+             <span className="name" title={loginUser.name}>{loginUser.name}</span>
              <MdKeyboardArrowDown />
-             <span className="logout">Log out</span>
+             <span className="logout" style={{ display: displayLogOut && "block" }} onClick={logoutHandler}>Log out</span>
            </span> 
           )
           }

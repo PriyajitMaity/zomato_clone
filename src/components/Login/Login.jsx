@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useState, useRef } from "react";
-import { HiOutlineX } from "react-icons/hi";
+import { HiOutlineX, HiCheck } from "react-icons/hi";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import "./Login.scss";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,43 +14,14 @@ const Login = ({ setLogIn }) => {
     watch,
   } = useForm();
   const [displayPassword, setDisplayPassword] = useState(false);
-  const [valueState, setValueState] = useState({ email: "", password: "" });
-  const [errorState, setErrorState] = useState({ email: "", password: "" });
-  const [wrongEmail, setWrongEmail] = useState(false);
-  const [wrongPassword, setWrongPassword] = useState(false);
   const [disableLogin, setDisableLogin] = useState(false);
   const [unknownError, setUnknownError] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [removeScale, setRemoveScale] = useState(false);
 
-  const [focusState, setFocusState] = useState({ email: false, password: false });
 
-  const emailRef = useRef(null);
   const dispatch = useDispatch();
   const loginUser = useSelector((state) => state.login_user.user);
-
-  const inputFocusHandler = (e) => {
-    setErrorState({ ...errorState, [e.target.id]: false });
-    setFocusState({ ...focusState, [e.target.id]: true });
-  };
-
-  const inputBlurHandler = (e) => {
-    // Implement your email and password validation logic here
-    // Update errorState based on validation results
-    const key = e.target.id;
-    setFocusState({ ...focusState, [key]: false });
-
-    if (key === "email" && !checkEmail(valueState.email)) {
-      errorState.email = true;
-    } else if (key === "password" && valueState.password) {
-      valueState.password = true;
-    }
-    setErrorState({ ...errorState });
-  };
-
-  const inputChangeHandler = (e) => {
-    setValueState({ ...valueState, [e.target.id]: e.target.value });
-  };
 
   const onSubmit = async (data) => {
     setDisableLogin(true);
@@ -63,14 +34,7 @@ const Login = ({ setLogIn }) => {
       setLoginSuccess(true);
       setLogIn(data.email); // Assuming loginUser is a state variable to store user details
     } catch (error) {
-      // Handle login errors
-      if (error.response && error.response.data.message === "Invalid Email Id") {
-        setWrongEmail(true);
-      } else if (error.response && error.response.data.message === "Incorrect password") {
-        setWrongPassword(true);
-      } else {
-        setUnknownError(true);
-      }
+      console.log(error);      
     } finally {
       setDisableLogin(false);
     }
@@ -97,73 +61,42 @@ const Login = ({ setLogIn }) => {
               {/* Email */}
               <div className="email">
                 <section
-                  className={`input-container ${valueState.email && focusState.email && "green"} ${
-                    errors.email && "red"
-                  }`}
+                  className="input-container"
                 >
                   <input
                     {...register("email", {
-                      required: "Email is required",
+                      required: true,
                       pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                         message: "Invalid email format",
                       },
                     })}
                     id="email"
-                    type="text"
-                    onFocus={inputFocusHandler}
-                    onBlur={inputBlurHandler}
-                    value={valueState.email}
-                    onChange={inputChangeHandler}
+                    type="email"
+                    onFocus={(e) => e.target.parentNode.querySelector("label").classList.add("label-style")}
+                    onBlur={(e) => {
+                      if (!e.target.value) e.target.parentNode.querySelector("label").classList.remove("label-style");
+                    }}
                     autoComplete="off"
-                    ref={emailRef}
                   />
-                  <label
-                    htmlFor="email"
-                    className={
-                      (focusState.email || valueState.email) &&
-                      `label-style ${valueState.email && focusState.email && "green"} ${errors.email && "red"}`
-                    }
-                  >
-                    Email
-                  </label>
-                  {valueState.email && (
-                    <span className="cross" onClick={() => setValueState({ ...valueState, email: "" })}>
-                      <HiOutlineX />
-                    </span>
-                  )}
+                  <label htmlFor="email">Email</label>
                 </section>
-                <span className="wrong-message">
-                  {errors.email?.message || (wrongEmail && "Email Id dose not exits, try to sign up")}
-                </span>
+                {errors.email && <span className="wrong-message">{errors.email.message}</span>}
               </div>
 
               {/* Password */}
               <div className="password">
-                <section
-                  className={`input-container ${valueState.password && focusState.password && "green"} ${
-                    errors.password && "red"
-                  }`}
-                >
+                <section className="input-container">
                   <input
                     {...register("password", { required: "Password is required" })}
                     id="password"
                     type={displayPassword ? "text" : "password"}
-                    onFocus={inputFocusHandler}
-                    onBlur={inputBlurHandler}
-                    value={valueState.password}
-                    onChange={inputChangeHandler}
-                    autoComplete="off"
+                    onFocus={(e) => e.target.parentNode.querySelector("label").classList.add("label-style")}
+                    onBlur={(e) => {
+                      if (!e.target.value) e.target.parentNode.querySelector("label").classList.remove("label-style");
+                    }}
                   />
-                  <label
-                    htmlFor="password"
-                    className={
-                      (focusState.password || valueState.password) &&
-                      `label-style ${valueState.password && focusState.password && "green"} ${errors.password && "red"}`
-                    }
-                  >
-                    Password
-                  </label>
+                  <label htmlFor="password">Password</label>
                   <span className="eye">
                     {displayPassword ? (
                       <AiFillEyeInvisible onClick={() => setDisplayPassword(false)} />
@@ -171,15 +104,8 @@ const Login = ({ setLogIn }) => {
                       <AiFillEye onClick={() => setDisplayPassword(true)} />
                     )}
                   </span>
-                  {valueState.password && (
-                    <span className="cross" onClick={() => setValueState({ ...valueState, password: "" })}>
-                      <HiOutlineX />
-                    </span>
-                  )}
                 </section>
-                <span className="wrong-message">
-                  {errors.password?.message || (wrongPassword && "Incorrect password")}
-                </span>
+                {errors.password && <span className="wrong-message">{errors.password.message}</span>}
               </div>
 
               {/* submit button */}

@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import "../Login/Login.scss";
 import { HiCheck, HiOutlineX } from "react-icons/hi";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { login } from "../Redux/loginUserSlice";
 
 const Signup = ({ setSignUp, setLogIn }) => {
   const {
@@ -16,47 +17,19 @@ const Signup = ({ setSignUp, setLogIn }) => {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [disableSignup, setDisableSignup] = useState(false);
   const [displayPassword, setDisplayPassword] = useState(false);
-  const [emailExist, setEmailExist] = useState(false);
   const [checked, setChecked] = useState(false);
   const [removeScale, setRemoveScale] = useState(false);
-  const [userData, setUserData] = useState({});
-  const [valueState, setValueState] = useState({ fullName: "", email: "", password: "" });
-  const [errorState, setErrorState] =useState({ fullName: false, email: false, password: false });
-  const [focusState, setFocusState] = useState({ fullName: false, email: false, password: false });
 
-  const fullNameRef = useRef();
   const dispatch = useDispatch();
 
-  const inputChangeHandler = (e) => {
-    let key = e.target.id;
-    let value = e.target.value;
-    if (key === "email") {
-      value = value.toLocaleLowerCase();
-      setEmailExist(false);
-    }
-    setValueState({ ...valueState, [key]: value });
-  };
-
-  const inputBlurHandler = (e) => {
-    let key = e.target.id;
-    setFocusState({ ...focusState, [key]: false });
-  };
-
-  const inputFocusHandler = (e) => {
-    let key = e.target.id;
-    setFocusState({ ...focusState, [key]: true });
-  };
-
-  const loginHandler =() =>{}
-
-  const onSubmit =async(data) => {
-    try {
-      
-    } catch (error) {
-      console.log(error);
-      
-    }
+  const loginHandler =(data) =>{
+    setSignUp(false);
+    dispatch(login(data));
   }
+  const onSubmit = async (data) => {
+    console.log(data);
+    setSignupSuccess(true);
+  };
 
   return (
     <div className="blur-background" onClick={() => setSignUp(false)}>
@@ -70,130 +43,89 @@ const Signup = ({ setSignUp, setLogIn }) => {
           {!signupSuccess ? (
             <>
               <section className="top-section">
-                <h2 className="heading">Sign Up</h2>
+                <h2 className="heading">Sign up</h2>
                 <span className="cross-btn" onClick={() => setSignUp(false)}>
                   <HiOutlineX />
                 </span>
               </section>
 
-              {/* Fullname */}
+              {/* Full Name */}
               <div className="full-name">
-                <section className={`input-container ${valueState.fullName && focusState.fullName && 'green'} ${errors.fullName && 'red'}`}>
+                <section className="input-container">
                   <input
                     {...register("fullName", {
-                      minLength: { value: 5, message: "full name must have a 5 letters" },
-                      maxLength: { value: 20, message: "your name reached maximum limit" },
+                      required: true,
+                      minLength: { value: 5, message: "your name must be 5 length character" },
+                      maxLength: { value: 20, message: "your name must be minimum 20 length character" },
                     })}
-                    required
-                    id="fullName"
                     type="text"
-                    onFocus={inputFocusHandler}
-                    onBlur={inputBlurHandler}
-                    value={valueState.fullName}
-                    onChange={inputChangeHandler}
-                    autoComplete="off"
-                    ref={fullNameRef}
+                    onFocus={(e) => e.target.parentNode.querySelector("label").classList.add("label-style")}
+                    onBlur={(e) => {
+                      if (!e.target.value) e.target.parentNode.querySelector("label").classList.remove("label-style");
+                    }}
                   />
-                  <label
-                    htmlFor="fullName"
-                    className={
-                      (focusState.fullName || valueState.fullName) &&
-                      `label-style ${valueState.fullName && focusState.fullName && "green"} ${errors.fullName && "green"}}`
-                    }
-                  >
-                    Full Name
-                  </label>
-                  {valueState.fullName && (
-                    <span className="cross" onClick={() => setValueState({ ...valueState, fullName: "" })}>
-                      <HiOutlineX />
-                    </span>
-                  )}
+                  <label htmlFor={`${errors.fullName ? 'red' : 'green'}`}>Full Name</label>
                 </section>
-                <span className="wrong-message">{errors.fullName && errors.fullName.message}</span>
+                {errors.fullName && <span className="wrong-message">{errors.fullName.message}</span>}
               </div>
 
               {/* Email */}
               <div className="email">
-                <section className={`input-container ${valueState.email && focusState.email && 'green'} ${errors.email && 'red'}`}>
+                <section className="input-container">
                   <input
                     {...register("email", {
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "Invalid email format",
-                      },
+                      required: true,
+                      message: "enter a valid email address",
                     })}
-                    required
-                    id="email"
-                    type="text"
-                    value={valueState.email}
-                    onFocus={inputFocusHandler}
-                    onBlur={inputBlurHandler}
-                    onChange={inputChangeHandler}
-                    autoComplete="off"
+                    type="email"
+                    onFocus={(e) => e.target.parentNode.querySelector("label").classList.add("label-style")}
+                    onBlur={(e) => {
+                      if (!e.target.value) e.target.parentNode.querySelector("label").classList.remove("label-style");
+                    }}
                   />
-                  <label
-                    htmlFor="email"
-                    className={
-                      (focusState.email || valueState.email) &&
-                      `label-style ${valueState.email && focusState.email && "green"}`
-                    }
-                  >
-                    Email
-                  </label>
-                  {valueState.email && (
-                    <span className="cross" onClick={() => setValueState({ ...valueState, email: "" })}>
-                      <HiOutlineX />
-                    </span>
-                  )}
+                  <label htmlFor="email">Email</label>
                 </section>
-                <span className="wrong-message">{errors.email && errors.email.message}</span>
+                {errors.email && <span className="wrong-message">{errors.email.message}</span>}
               </div>
 
               {/* Password */}
               <div className="password">
-                <section className={`input-container ${valueState.password && focusState.password && 'green'} ${errors.password && 'red'}`}>
+                <section className="input-container">
                   <input
                     {...register("password", {
-                      required: "Password is required",
-                      minLength: { value: 6, message: "Password must be at least 6 characters" },
-                      validate: {
-                        hasNumber: (value) => /\d/.test(value) || "Password must include a number",
-                        hasUppercase: (value) =>
-                          /[A-Z]/.test(value) || "Password must include an uppercase letter",
+                      required: true,
+                      minLength: { value: 6, message: "*password must be more than 6 letter" },
+                      pattern: {
+                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                        message:
+                          "*password must contain at least 6 characters, including uppercase, lowercase, number and special character",
                       },
                     })}
-                    required
-                    id={displayPassword ? 'text' : 'password'}
-                    type="text"
-                    value={valueState.password}
-                    onFocus={inputFocusHandler}
-                    onBlur={inputBlurHandler}
-                    onChange={inputChangeHandler}
-                    autoComplete="off"
+                    type={displayPassword ? 'text' : 'password'}
+                    onFocus={(e) => e.target.parentNode.querySelector("label").classList.add("label-style")}
+                    onBlur={(e) => {
+                      if (!e.target.value) e.target.parentNode.querySelector("label").classList.remove("label-style");
+                    }}
                   />
-                  <label
-                    htmlFor="password"
-                    className={
-                      (focusState.password || valueState.password) &&
-                      `label-style ${valueState.password && focusState.password && "green"}`
-                    }
-                  >
-                    Password
-                  </label>
-                  <span className="eye">
+                  <label htmlFor="password">Password</label>
+                  <span className='eye'>
                     {displayPassword ? (
-                      <AiFillEyeInvisible onClick={() => setDisplayPassword(false)} />
+                      <AiFillEyeInvisible
+                        onClick={() => setDisplayPassword(false)}
+                      />
                     ) : (
-                      <AiFillEye onClick={() => setDisplayPassword(true)} />
+                      <AiFillEye
+                        onClick={() => setDisplayPassword(true)}
+                      />
                     )}
                   </span>
                 </section>
-                <span className="wrong-message">{errors.password && errors.password.message}</span>
+                {errors.password && <span className="wrong-message">{errors.password.message}</span>}
               </div>
 
-              {/* terms & conditions */}
-              <section className="terms-condition">
-                <input type="checkbox" onChange={() =>setChecked(!checked)} checked={checked}/>
+              {/* terms conditions */}
+              <section className="terms-conditions">
+                <input type="checkbox" onChange={() => setChecked(!checked)} checked={checked} />
                 <span className="terms">
                   I agree to Zomato's{" "}
                   <a href="https://www.zomato.com/conditions" target="_blank">
@@ -211,19 +143,25 @@ const Signup = ({ setSignUp, setLogIn }) => {
               </section>
 
               {/* submit button */}
-              <button type="submit" disabled={!checked || disableSignup} className="submit-btn">{disableSignup ? "Don't go back, creating back...." : "Create account"}</button>
+              <button type="submit" className="submit-btn" disabled={!checked || disableSignup}>
+                {disableSignup ? "Don't go back, creating account..." : "Create Account"}
+              </button>
 
               <hr />
 
               {/* go to login */}
               {!disableSignup ? (
                 <section className="alternate">
-                  {"Already have an account ? "}
-                  <span className="text-link"
-                   onClick={() =>{
-                      setLogIn(true);
+                  {"Already have an account? "}
+                  <span
+                    className="text-link"
+                    onClick={() => {
                       setSignUp(false);
-                  }} >Log in</span>
+                      setLogIn(true);
+                    }}
+                  >
+                    Log in
+                  </span>
                 </section>
               ) : (
                 <span className="disclaimer">If form didn't work within 30 seconds, go back and try again</span>
@@ -237,27 +175,38 @@ const Signup = ({ setSignUp, setLogIn }) => {
                   <div className="moving-element"></div>
                 </div>
                 <h2 className="heading">Success!</h2>
-                <p className="text">Accoutn created successfully. Do you want to login ?</p>
+                <p className="text">Account created successfully. Do you want to login?</p>
                 <div className="buttons">
-                  <button className="login" onClick={loginHandler}>Yes, login</button>
-                  <button className="cancel" onClick={() =>setSignUp(false)}>Cancel</button>
+                  <button className="login" onClick={() =>{
+                    setSignUp(true);
+                    setLogIn(true)
+                  }}>
+                    Yes, Login
+                  </button>
+                  <button className="cancel" onClick={() => setSignUp(false)}>
+                    Cancel
+                  </button>
                 </div>
               </section>
             </>
           )}
         </form>
       ) : (
-        <div className="sign-up-failed" onClick={(e) =>e.stopPropagation()}>
+        <div className="sign-up-failed" onClick={(e) => e.stopPropagation()}>
           <section className="top-section">
             <h2 className="heading">Signup Failed</h2>
-            <span className="cross-btn" onClick={() =>setSignUp(false)}>
+            <span className="cross-btn" onClick={() => setSignUp(false)}>
               <HiOutlineX />
             </span>
           </section>
 
           <p className="message">Somthing went wrong, Please check your network and try again</p>
-          <button className="try-again" onClick={() =>setUnknownError(false)}>Try again</button>
-          <button className="skip" onClick={() =>setSignUp(false)}>Skip for now</button>
+          <button className="try-again" onClick={() => setUnknownError(false)}>
+            Try again
+          </button>
+          <button className="skip" onClick={() => setSignUp(false)}>
+            Skip for now
+          </button>
         </div>
       )}
     </div>
