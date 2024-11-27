@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Login/Login.scss";
 import { HiCheck, HiOutlineX } from "react-icons/hi";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { login } from "../Redux/loginUserSlice";
+import axios from "axios";
 
 const Signup = ({ setSignUp, setLogIn }) => {
   const {
@@ -19,17 +20,46 @@ const Signup = ({ setSignUp, setLogIn }) => {
   const [displayPassword, setDisplayPassword] = useState(false);
   const [checked, setChecked] = useState(false);
   const [removeScale, setRemoveScale] = useState(false);
+  const [userDetails, setUserDetails] =useState({name: "", email: "", password: ""})
 
   const dispatch = useDispatch();
 
-  const loginHandler =(data) =>{
-    setSignUp(false);
-    dispatch(login(data));
-  }
-  const onSubmit = async (data) => {
-    console.log(data);
-    setSignupSuccess(true);
+  const loginHandler = () => {
+     setSignUp(false);
+     dispatch(login(userDetails));
+     dispatch(cartInitialization(localStorage.getItem("cart_items") ? JSON.parse(localStorage.getItem("cart_items")) : {}));
   };
+  const userRegistration = async (data) => {
+    setDisableSignup(true);
+    try {
+      const response = await axios.post("http://localhost:5000/api/register", data);
+
+      if (response.status ===210) {
+        setUserDetails(response.data);
+       }
+    } catch (error) {
+      setDisableSignup(false);
+      setChecked(false);
+      setDisplayPassword(false);
+      setUserDetails({
+        fullName: "", email: "", password: ""
+      })
+      console.log(error);
+    }
+  };
+  const onSubmit = (data) => {
+    userRegistration(data);
+    setSignupSuccess(true);
+
+  };
+
+  useEffect(() => {
+    setRemoveScale(true);
+    document.body.style.overflow = "hidden";
+    return () => {
+        document.body.style.overflow = "auto";
+    }
+}, [])
 
   return (
     <div className="blur-background" onClick={() => setSignUp(false)}>
@@ -53,7 +83,7 @@ const Signup = ({ setSignUp, setLogIn }) => {
               <div className="full-name">
                 <section className="input-container">
                   <input
-                    {...register("fullName", {
+                    {...register("name", {
                       required: true,
                       minLength: { value: 5, message: "your name must be 5 length character" },
                       maxLength: { value: 20, message: "your name must be minimum 20 length character" },
@@ -64,9 +94,9 @@ const Signup = ({ setSignUp, setLogIn }) => {
                       if (!e.target.value) e.target.parentNode.querySelector("label").classList.remove("label-style");
                     }}
                   />
-                  <label htmlFor={`${errors.fullName ? 'red' : 'green'}`}>Full Name</label>
+                  <label htmlFor="full-name" className={`${errors.name ? "red" : "green"}`}>Full Name</label>
                 </section>
-                {errors.fullName && <span className="wrong-message">{errors.fullName.message}</span>}
+                {errors.name && <span className="wrong-message">{errors.name.message}</span>}
               </div>
 
               {/* Email */}
@@ -101,22 +131,18 @@ const Signup = ({ setSignUp, setLogIn }) => {
                           "*password must contain at least 6 characters, including uppercase, lowercase, number and special character",
                       },
                     })}
-                    type={displayPassword ? 'text' : 'password'}
+                    type={displayPassword ? "text" : "password"}
                     onFocus={(e) => e.target.parentNode.querySelector("label").classList.add("label-style")}
                     onBlur={(e) => {
                       if (!e.target.value) e.target.parentNode.querySelector("label").classList.remove("label-style");
                     }}
                   />
                   <label htmlFor="password">Password</label>
-                  <span className='eye'>
+                  <span className="eye">
                     {displayPassword ? (
-                      <AiFillEyeInvisible
-                        onClick={() => setDisplayPassword(false)}
-                      />
+                      <AiFillEyeInvisible onClick={() => setDisplayPassword(false)} />
                     ) : (
-                      <AiFillEye
-                        onClick={() => setDisplayPassword(true)}
-                      />
+                      <AiFillEye onClick={() => setDisplayPassword(true)} />
                     )}
                   </span>
                 </section>
@@ -155,10 +181,7 @@ const Signup = ({ setSignUp, setLogIn }) => {
                   {"Already have an account? "}
                   <span
                     className="text-link"
-                    onClick={() => {
-                      setSignUp(false);
-                      setLogIn(true);
-                    }}
+                    onClick={loginHandler}
                   >
                     Log in
                   </span>
@@ -177,10 +200,13 @@ const Signup = ({ setSignUp, setLogIn }) => {
                 <h2 className="heading">Success!</h2>
                 <p className="text">Account created successfully. Do you want to login?</p>
                 <div className="buttons">
-                  <button className="login" onClick={() =>{
-                    setSignUp(true);
-                    setLogIn(true)
-                  }}>
+                  <button
+                    className="login"
+                    onClick={() => {
+                      setSignUp(true);
+                      setLogIn(true);
+                    }}
+                  >
                     Yes, Login
                   </button>
                   <button className="cancel" onClick={() => setSignUp(false)}>
