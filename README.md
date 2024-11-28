@@ -6,8 +6,7 @@
 
 ## Demo
 
-
-- [Demo](https://priyojeet-resturant.netlify.app/)
+- [Zomato clone](https://priyojeet-zomato-clone.vercel.app/)
 
 ## Tech Stack
 
