@@ -14,7 +14,14 @@
 - CSS
 - JavaScript
 - React Js
+- Redux Toolkit
+- axios
+- Scss
+- ExpressJs
+- MongoDB
+- Node Js
+  
 
 
 ### Screenshots
-![Screenshot (18)](https://github.com/PriyajitMaity/projects/assets/134254753/3a63b342-4daf-4c83-ae94-beb0aae3dcdf)
+
