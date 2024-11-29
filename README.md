@@ -6,6 +6,9 @@
 
 - [Zomato clone](https://priyojeet-zomato-clone.vercel.app/)
 
+## Description
+- Zomato clone is a online food ordering platform. This site is build with lots of creative ui. for storing user data mongodb is being used.
+
 ## Tech Stack
 
 - HTML
