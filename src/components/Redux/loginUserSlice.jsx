@@ -37,8 +37,8 @@ export const loginUserSlice =createSlice({
             saveUserToLocalStorage(state.user);
         },
         logout: (state) =>{
-            state.user = []
-            saveUserToLocalStorage(state.user);
+            state.user = null
+            localStorage.removeItem('user');
         }    
     }
 })

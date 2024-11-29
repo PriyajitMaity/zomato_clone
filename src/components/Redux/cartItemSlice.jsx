@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { updateCartItems } from '../../utils/updateCartItems/updateCartItems';
 
 // Load cart items from localStorage if available
 const loadCartFromLocalStorage = () => {
@@ -19,6 +20,7 @@ const saveCartToLocalStorage = (items) => {
     try {
         const serializedCart = JSON.stringify(items);
         localStorage.setItem('cart', serializedCart);
+        updateCartItems();
     } catch (e) {
         console.warn('Could not save cart to localStorage:', e);
     }
@@ -42,6 +44,7 @@ export const cartItemSlice =createSlice({
                 state.items.push({...payload, quantity :1});
             }
             saveCartToLocalStorage(state.items);
+            updateCartItems();
         },
         deleteItem(state, {payload}){
             state.items =state.items.map((item) =>{
@@ -51,10 +54,12 @@ export const cartItemSlice =createSlice({
                 return item;
             }).filter(item =>item.quantity !== 0);
             saveCartToLocalStorage(state.items); 
+            updateCartItems();
         },
         clearCart(state){
             state.items=[];
             saveCartToLocalStorage(state.items);
+            updateCartItems();
         }
         
     }

@@ -1,17 +1,18 @@
 import { useForm } from "react-hook-form";
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { HiOutlineX, HiCheck } from "react-icons/hi";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import "./Login.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../Redux/loginUserSlice";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ setLogIn }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm();
   const [displayPassword, setDisplayPassword] = useState(false);
   const [disableLogin, setDisableLogin] = useState(false);
@@ -19,26 +20,33 @@ const Login = ({ setLogIn }) => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [removeScale, setRemoveScale] = useState(false);
 
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const loginUser = useSelector((state) => state.login_user.user);
 
   const onSubmit = async (data) => {
     setDisableLogin(true);
+    setUnknownError(false);
     try {
-      // Implement your login logic using data.email and data.password
-      // Replace with your actual login API call or logic
-      dispatch(login(data.user));
-      console.log(data.user);
-      // Assuming successful login:
+      const response = await axios.post("http://localhost:5000/api/login", data);
+      dispatch(login(response.data));
       setLoginSuccess(true);
-      setLogIn(data.email); // Assuming loginUser is a state variable to store user details
+      setLogIn(data.email);
     } catch (error) {
-      console.log(error);      
+      console.log(error);
+      setUnknownError(true);
     } finally {
       setDisableLogin(false);
     }
   };
+
+  useEffect(() => {
+    setRemoveScale(true);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
   return (
     <div className="blur-background" onClick={() => setLogIn(false)}>
@@ -60,9 +68,7 @@ const Login = ({ setLogIn }) => {
 
               {/* Email */}
               <div className="email">
-                <section
-                  className="input-container"
-                >
+                <section className="input-container">
                   <input
                     {...register("email", {
                       required: true,
@@ -114,6 +120,25 @@ const Login = ({ setLogIn }) => {
               </button>
 
               {/* ... rest of your form elements */}
+              <hr />
+
+              {/* go to sign up */}
+              {!disableLogin ? (
+                <section className="alternate">
+                  {"New to Zomato Clone? "}
+                  <span
+                    className="text-link"
+                    onClick={() => {
+                      setLogIn(false);
+                      setSignUp(true);
+                    }}
+                  >
+                    Create account
+                  </span>
+                </section>
+              ) : (
+                <span className="disclaimer">If form didn't work within 30 seconds, go back and try again</span>
+              )}
             </>
           ) : (
             // Login success section
@@ -150,7 +175,7 @@ const Login = ({ setLogIn }) => {
             </span>
           </section>
 
-          <p className="message">Something went wrong, please check your network and try again</p>
+          <p className="message">Something went wrong, please fill the correct credentials and try again</p>
           <button className="try-again" onClick={() => setUnknownError(false)}>
             Try again
           </button>
